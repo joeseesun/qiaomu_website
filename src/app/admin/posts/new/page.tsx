@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import TagifyInput from '@/components/TagifyInput';
 import ImageUploader from '@/components/ImageUploader';
 import IsolatedMarkdownEditor from '@/components/IsolatedMarkdownEditor';
@@ -200,7 +201,7 @@ export default function NewPostPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">创建新文章</h1>
         <div className="flex space-x-2">
@@ -244,16 +245,16 @@ export default function NewPostPage() {
             {/* 根据页面类型显示不同的编辑器 */}
             {pageType === 'markdown' ? (
               <div>
-                <h3 className="font-medium text-gray-700 mb-3">Markdown 编辑器</h3>
+                
                 <IsolatedMarkdownEditor
                   value={content}
                   onChange={setContent}
-                  height={600}
+                  height={650}
                 />
               </div>
             ) : (
               <div>
-                <h3 className="font-medium text-gray-700 mb-3">HTML 编辑器</h3>
+               
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
@@ -272,17 +273,21 @@ export default function NewPostPage() {
               {/* 页面类型 */}
               <div className="mb-4">
                 <label className="block text-sm text-gray-600 mb-1">页面类型</label>
-                <select
+                <ToggleGroup
+                  type="single"
                   value={pageType}
-                  onChange={(e) => setPageType(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  onValueChange={(value) => value && setPageType(value)}
+                  className="w-full border rounded-md overflow-hidden"
+                  variant="outline"
                 >
-                  <option value="markdown">Markdown 文章</option>
-                  <option value="html">HTML 全页面</option>
-                </select>
-                <p className="text-xs text-gray-500 mt-1">
-                  HTML全页面将直接显示您的HTML代码，不使用网站模板
-                </p>
+                  <ToggleGroupItem value="markdown" className="flex-1 text-center">
+                    Markdown
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="html" className="flex-1 text-center">
+                    HTML
+                  </ToggleGroupItem>
+                </ToggleGroup>
+          
               </div>
 
               {/* URL别名 */}
@@ -315,7 +320,7 @@ export default function NewPostPage() {
               {/* 分类 - 多选 */}
               <div className="mb-4">
                 <label className="block text-sm text-gray-600 mb-1">分类（可多选）</label>
-                <div className="border rounded-md p-2 max-h-40 overflow-y-auto">
+                <div className="border rounded-md p-2 max-h-20 overflow-y-auto">
                   {categories.map((category) => (
                     <div key={category.id} className="flex items-center space-x-2 py-1">
                       <Checkbox
@@ -346,7 +351,7 @@ export default function NewPostPage() {
                   value={coverImage}
                   onChange={setCoverImage}
                   label="封面图片"
-                  placeholder="选择或拖放封面图片到此处"
+                  placeholder="选择或拖放封面到此处"
                 />
               </div>
 
@@ -361,9 +366,7 @@ export default function NewPostPage() {
                   placeholder="输入标签..."
                   className="w-full text-sm"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  输入标签名称并按回车添加
-                </p>
+                
               </div>
             </div>
           </div>

@@ -6,11 +6,11 @@ import { generateSlug } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { ToastAction } from '@/components/ui/toast';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import TagifyInput from '@/components/TagifyInput';
 import ImageUploader from '@/components/ImageUploader';
 import IsolatedMarkdownEditor from '@/components/IsolatedMarkdownEditor';
@@ -453,16 +453,16 @@ export default function EditPostPage() {
               {/* 根据页面类型显示不同的编辑器 */}
               {pageType === 'markdown' ? (
                 <div>
-                  <h3 className="font-medium text-gray-700 mb-3">Markdown 编辑器</h3>
+
                   <IsolatedMarkdownEditor
                     value={content}
                     onChange={setContent}
-                    height={600}
+                    height={650}
                   />
                 </div>
               ) : (
                 <div>
-                  <h3 className="font-medium text-gray-700 mb-3">HTML 编辑器</h3>
+
                   <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
@@ -481,18 +481,21 @@ export default function EditPostPage() {
                 {/* 页面类型 */}
                 <div className="mb-4">
                   <Label className="block text-sm text-gray-600 mb-1">页面类型</Label>
-                  <Select value={pageType} onValueChange={setPageType}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="选择页面类型" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="markdown">Markdown 文章</SelectItem>
-                      <SelectItem value="html">HTML 全页面</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-gray-500 mt-1">
-                    HTML全页面将直接显示您的HTML代码，不使用网站模板
-                  </p>
+                  <ToggleGroup
+                    type="single"
+                    value={pageType}
+                    onValueChange={(value) => value && setPageType(value)}
+                    className="w-full border rounded-md overflow-hidden"
+                    variant="outline"
+                  >
+                    <ToggleGroupItem value="markdown" className="flex-1 text-center">
+                      Markdown
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="html" className="flex-1 text-center">
+                      HTML
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                  
                 </div>
 
                 {/* URL别名 */}
@@ -516,7 +519,7 @@ export default function EditPostPage() {
                         onCheckedChange={(checked) => setAutoUpdateSlug(checked === true)}
                       />
                       <Label htmlFor="auto-update-slug" className="text-xs text-gray-500">
-                        根据标题自动更新
+                        根据标题生成
                       </Label>
                     </div>
                   </div>
@@ -525,7 +528,7 @@ export default function EditPostPage() {
                 {/* 分类 - 多选 */}
                 <div className="mb-4">
                   <Label className="block text-sm text-gray-600 mb-1">分类（可多选）</Label>
-                  <div className="border rounded-md p-2 max-h-40 overflow-y-auto">
+                  <div className="border rounded-md p-2 max-h-20 overflow-y-auto">
                     {categories.map((category) => (
                       <div key={category.id} className="flex items-center space-x-2 py-1">
                         <Checkbox
@@ -561,9 +564,7 @@ export default function EditPostPage() {
                     placeholder="输入标签..."
                     className="w-full text-sm"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    输入标签名称并按回车添加
-                  </p>
+                  
                 </div>
 
                 {/* 封面图片 */}
@@ -589,7 +590,7 @@ export default function EditPostPage() {
                     </Label>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    未勾选则保存为草稿，不会在前台显示
+                    未勾保存为草稿，不会前台显示
                   </p>
                 </div>
               </div>

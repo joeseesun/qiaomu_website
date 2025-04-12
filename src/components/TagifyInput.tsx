@@ -32,15 +32,15 @@ export default function TagifyInput({
     if (!whitelist) {
       return [];
     }
-    
+
     if (!Array.isArray(whitelist)) {
       return [];
     }
-    
+
     if (whitelist.length === 0) {
       return [];
     }
-    
+
     // 确保每个项目都有正确的格式
     return whitelist.filter(item => item && typeof item === 'object').map(item => {
       // 检查是否有 name 属性（API 返回的标签数据）
@@ -70,18 +70,18 @@ export default function TagifyInput({
     if (!query || typeof query !== 'string') {
       return;
     }
-    
+
     try {
       setIsSearching(true);
-      
+
       const response = await fetch(`/api/tags?search=${encodeURIComponent(query)}`);
       if (!response.ok) {
         throw new Error('搜索标签失败');
       }
-      
+
       const result = await response.json();
       const tags = result.data || [];
-      
+
       // 更新 Tagify 实例的白名单
       if (tagifyRef.current) {
         // 格式化搜索结果
@@ -89,18 +89,18 @@ export default function TagifyInput({
           value: tag.name,
           id: tag.id
         }));
-        
+
         // 更新白名单
         const newWhitelist = [...formattedWhitelist, ...searchResults];
-        
+
         // 去重
         const uniqueWhitelist = Array.from(
           new Map(newWhitelist.map(item => [item.id, item])).values()
         );
-        
+
         // 设置白名单
         tagifyRef.current.settings.whitelist = uniqueWhitelist;
-        
+
         // 刷新下拉菜单
         try {
           // @ts-ignore - Tagify 类型定义不完整
@@ -119,18 +119,18 @@ export default function TagifyInput({
   // 初始化 Tagify
   useEffect(() => {
     if (!inputRef.current) return;
-    
+
     // 销毁之前的实例
     if (tagifyRef.current) {
       tagifyRef.current.destroy();
     }
-    
+
     const settings = {
       enforceWhitelist: false,
       maxTags: 10,
       backspace: 'edit',
       placeholder,
-      editTags: false,
+      editTags: true, // 允许编辑标签
       dropdown: {
         enabled: 0,            // 设置为0，表示在输入框获得焦点时就显示下拉菜单
         maxItems: 20,          // 最多显示20个项目
@@ -152,22 +152,22 @@ export default function TagifyInput({
         }
       }
     };
-    
+
     // 创建 Tagify 实例
     tagifyRef.current = new Tagify(inputRef.current, settings);
-    
+
     // 添加事件监听器
     tagifyRef.current.on('add', handleTagChange);
     tagifyRef.current.on('remove', handleTagChange);
     tagifyRef.current.on('input', handleInput);
     tagifyRef.current.on('focus', handleFocus);
     tagifyRef.current.on('blur', handleTagChange);
-    tagifyRef.current.on('edit', handleTagChange);
+    tagifyRef.current.on('edit:updated', handleTagChange); // 使用 edit:updated 事件代替 edit 事件
     tagifyRef.current.on('invalid', handleInvalid);
-    
+
     // 设置初始值
     setInitialValueSet(false);
-    
+
     return () => {
       if (tagifyRef.current) {
         tagifyRef.current.destroy();
@@ -178,34 +178,48 @@ export default function TagifyInput({
   // 处理初始值
   useEffect(() => {
     if (!tagifyRef.current || initialValueSet || !value) return;
-    
+
     try {
       const parsedValue = JSON.parse(value);
-      if (Array.isArray(parsedValue) && parsedValue.length > 0) {
+      if (Array.isArray(parsedValue)) {
         // 清空现有标签
         tagifyRef.current.removeAllTags();
-        
-        // 添加标签
-        tagifyRef.current.addTags(parsedValue);
+
+        // 只有当有标签时才添加
+        if (parsedValue.length > 0) {
+          // 添加标签
+          tagifyRef.current.addTags(parsedValue);
+        }
+
         setInitialValueSet(true);
       }
     } catch (e) {
       console.error('Error parsing initial value:', e);
+      // 如果解析失败，仍然标记为已设置初始值，避免重复尝试
+      setInitialValueSet(true);
     }
   }, [value, initialValueSet]);
 
   // 处理标签变化
   function handleTagChange(e: CustomEvent) {
     if (!tagifyRef.current) return;
-    
-    const tagsJson = JSON.stringify(tagifyRef.current.value);
-    onChange(tagsJson);
+
+    try {
+      // 防止在标签值为空或无效时出错
+      const tagsValue = tagifyRef.current.value || [];
+      const tagsJson = JSON.stringify(tagsValue);
+      onChange(tagsJson);
+    } catch (error) {
+      console.error('处理标签变化时出错:', error);
+      // 返回空数组作为默认值
+      onChange(JSON.stringify([]));
+    }
   }
 
   // 处理输入事件
   function handleInput(e: CustomEvent) {
     const input = e.detail.value;
-    
+
     // 执行搜索
     searchTags(input);
   }
@@ -214,7 +228,7 @@ export default function TagifyInput({
   function handleFocus(e: CustomEvent) {
     // 获取所有标签
     searchTags('');
-    
+
     // 显示下拉菜单
     if (tagifyRef.current && formattedWhitelist.length > 0) {
       setTimeout(() => {
@@ -240,7 +254,7 @@ export default function TagifyInput({
         className={`tagify-input ${className}`}
         disabled={loading}
       />
-      
+
       {/* 搜索状态指示器 */}
       {isSearching && (
         <div className="search-indicator">
@@ -248,7 +262,7 @@ export default function TagifyInput({
           <span className="search-text">搜索中...</span>
         </div>
       )}
-      
+
       <style jsx>{`
         .tagify-wrapper {
           position: relative;

@@ -70,8 +70,8 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* 导航栏 */}
-      <SimpleNavigation siteTitle="向阳乔木的个人博客" categories={categories} />
-      
+      <SimpleNavigation siteTitle="向阳乔木的个人博客" menus={[]} />
+
       {/* Hero区域 */}
       <section className="hero">
         <div className="hero-background">
@@ -86,13 +86,13 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      
+
       {/* 特色文章轮播 */}
       {featuredPosts.length > 0 && (
         <section className="py-8">
           <div className="container">
             <h2 className="text-2xl font-bold mb-6">推荐文章</h2>
-            
+
             <div className="featured-slider">
               <div className="slider-container" style={{ height: '400px' }}>
                 {featuredPosts.map((post, index) => (
@@ -108,20 +108,20 @@ export default async function HomePage() {
                     ) : (
                       <div className="w-full h-full bg-gray-200 dark:bg-gray-700"></div>
                     )}
-                    
+
                     <div className="slide-content">
                       {post.categoryName && (
                         <span className="slide-category">{post.categoryName}</span>
                       )}
-                      
+
                       <h3 className="slide-title">
                         <Link href={`/posts/${post.slug}`}>{post.title}</Link>
                       </h3>
-                      
+
                       {post.excerpt && (
                         <p className="slide-description">{post.excerpt}</p>
                       )}
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm">
                           <span className="mr-3">
@@ -131,7 +131,7 @@ export default async function HomePage() {
                             {formatDate(post.createdAt)}
                           </span>
                         </div>
-                        
+
                         <Link href={`/posts/${post.slug}`} className="inline-flex items-center text-primary-400 hover:text-primary-300 font-medium text-sm">
                           阅读全文
                           <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -143,7 +143,7 @@ export default async function HomePage() {
                   </div>
                 ))}
               </div>
-              
+
               {featuredPosts.length > 1 && (
                 <>
                   <div className="slider-controls">
@@ -152,14 +152,14 @@ export default async function HomePage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"></path>
                       </svg>
                     </button>
-                    
+
                     <button className="slider-control next">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"></path>
                       </svg>
                     </button>
                   </div>
-                  
+
                   <div className="slider-dots">
                     {featuredPosts.map((_, index) => (
                       <button
@@ -175,7 +175,7 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-      
+
       {/* 主内容区 */}
       <main className="flex-grow py-8">
         <div className="container">
@@ -184,8 +184,8 @@ export default async function HomePage() {
             <div className="col-span-1 lg:col-span-2">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold">最新文章</h2>
-                <Link 
-                  href="/posts" 
+                <Link
+                  href="/posts"
                   className="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
                 >
                   查看全部
@@ -194,11 +194,11 @@ export default async function HomePage() {
                   </svg>
                 </Link>
               </div>
-              
+
               <div className="space-y-6">
                 {recentPosts.map((post) => (
-                  <article 
-                    key={post.id} 
+                  <article
+                    key={post.id}
                     className="article-card"
                   >
                     <div className="md:flex">
@@ -224,8 +224,8 @@ export default async function HomePage() {
                             </span>
                           )}
                           {post.category && (
-                            <Link 
-                              href={`/categories/${post.category.slug}`} 
+                            <Link
+                              href={`/categories/${post.category.slug}`}
                               className="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs rounded font-medium hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                             >
                               {post.category.name}
@@ -235,24 +235,24 @@ export default async function HomePage() {
                             {post.createdAt ? formatDate(post.createdAt) : '未知日期'}
                           </time>
                         </div>
-                        
+
                         <Link href={`/posts/${post.slug}`}>
                           <h3 className="article-title">
                             {String(post.title)}
                           </h3>
                         </Link>
-                        
+
                         <p className="article-excerpt">
                           {post.excerpt}
                         </p>
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                             {post.author?.email ? post.author.email.split('@')[0] : '匿名'}
                           </div>
-                          
-                          <Link 
-                            href={`/posts/${post.slug}`} 
+
+                          <Link
+                            href={`/posts/${post.slug}`}
                             className="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
                           >
                             阅读全文
@@ -266,10 +266,10 @@ export default async function HomePage() {
                   </article>
                 ))}
               </div>
-              
+
               <div className="mt-8 text-center">
-                <Link 
-                  href="/posts" 
+                <Link
+                  href="/posts"
                   className="btn btn-primary"
                 >
                   查看更多文章
@@ -279,13 +279,13 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
-            
+
             {/* 侧边栏 */}
             <Sidebar categories={categories} tags={tags} />
           </div>
         </div>
       </main>
-      
+
       {/* 页脚 */}
       <Footer />
     </div>

@@ -6,13 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from "@/components/ui/button";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -89,11 +89,11 @@ interface SortableMenuItemProps {
 
 // 简化的SortableMenuItem组件
 const SortableMenuItem: React.FC<SortableMenuItemProps> = ({ id, menu, children }) => {
-  const { 
-    attributes, 
-    listeners, 
-    setNodeRef, 
-    transform, 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
     transition,
     isDragging,
   } = useSortable({
@@ -106,7 +106,7 @@ const SortableMenuItem: React.FC<SortableMenuItemProps> = ({ id, menu, children 
 
   // 获取拖拽指示器上下文
   const { dropIndicator } = useContext(MenuContext);
-  
+
   // 判断当前项是否是拖拽目标
   const isDropTarget = dropIndicator?.id === id;
 
@@ -132,9 +132,9 @@ const SortableMenuItem: React.FC<SortableMenuItemProps> = ({ id, menu, children 
       {isDropTarget && dropIndicator && (
         <DropIndicatorComponent dropIndicator={dropIndicator} />
       )}
-      
-      {React.isValidElement(children) 
-        ? React.cloneElement(children as React.ReactElement<any>, { 
+
+      {React.isValidElement(children)
+        ? React.cloneElement(children as React.ReactElement<any>, {
             dragHandleProps: listeners,
             isDragging: isDragging // 传递isDragging属性
           })
@@ -170,7 +170,7 @@ const RootDropArea: React.FC = () => {
       type: 'root'
     }
   });
-  
+
   return (
     <div
       ref={setNodeRef}
@@ -217,10 +217,10 @@ const DropIndicatorComponent = memo(({ dropIndicator }: { dropIndicator: DropInd
   // 普通排序指示器（前/后）
   const isBeforeIndicator = dropIndicator.position === 'before';
   return (
-    <div 
+    <div
       className={`absolute left-0 right-0 h-1 bg-blue-500 ${isBeforeIndicator ? 'top-0' : 'bottom-0'}`}
-      style={{ 
-        marginLeft: dropIndicator.indentLevel ? `${dropIndicator.indentLevel * 24}px` : '0' 
+      style={{
+        marginLeft: dropIndicator.indentLevel ? `${dropIndicator.indentLevel * 24}px` : '0'
       }}
     />
   );
@@ -237,14 +237,14 @@ export default function MenusPage() {
   const [dragOffset, setDragOffset] = useState<{x: number, startX?: number} | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [dropIndicator, setDropIndicator] = useState<DropIndicator | null>(null);
-  
+
   // 增删改查状态
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentMenu, setCurrentMenu] = useState<Menu | null>(null);
   const [menuToDelete, setMenuToDelete] = useState<number | null>(null);
-  
+
   // 新菜单表单状态
   const [newMenu, setNewMenu] = useState({
     name: '',
@@ -255,7 +255,7 @@ export default function MenusPage() {
     parentId: '',
     order: 0
   });
-  
+
   // 编辑菜单表单状态
   const [editMenu, setEditMenu] = useState({
     id: 0,
@@ -299,7 +299,7 @@ export default function MenusPage() {
           };
         });
     };
-    
+
     // 扁平化菜单树，添加层级信息
     const flattenMenuTree = (menuTree: MenuWithChildren[], level = 0, result: MenuWithLevel[] = []): MenuWithLevel[] => {
       menuTree.forEach(menu => {
@@ -312,15 +312,15 @@ export default function MenusPage() {
           children: undefined // 移除children属性，避免在UI组件中传递不必要的数据
         };
         result.push(menuWithLevel);
-        
+
         if (menu.children.length > 0) {
           flattenMenuTree(menu.children, level + 1, result);
         }
       });
-      
+
       return result;
     };
-    
+
     const menuTree = createMenuTree(menus);
     return flattenMenuTree(menuTree);
   }, []);
@@ -329,12 +329,12 @@ export default function MenusPage() {
   const fetchMenus = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // 获取当前窗口的 URL
       const baseUrl = window.location.origin;
       console.log('正在获取菜单数据，请求URL:', `${baseUrl}/api/menus`);
-      
+
       const response = await fetch(`${baseUrl}/api/menus`, {
         method: 'GET',
         headers: {
@@ -342,14 +342,14 @@ export default function MenusPage() {
           'Cache-Control': 'no-cache'
         }
       });
-      
+
       if (!response.ok) {
         console.error('获取菜单失败:', response.status, response.statusText);
         const errorText = await response.text().catch(() => '无法获取错误详情');
         console.error('错误详情:', errorText);
         throw new Error(`获取菜单失败 (${response.status}): ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log('成功获取菜单数据:', data);
       setMenus(data);
@@ -372,10 +372,10 @@ export default function MenusPage() {
     const { active } = event;
     setActiveId(active.id);
     setIsDragging(true);
-    
+
     // 初始化拖拽偏移量为0
     setDragOffset({ x: 0, startX: 0 });
-    
+
     console.log('拖拽开始 - 初始化偏移量为0');
   };
 
@@ -386,30 +386,30 @@ export default function MenusPage() {
     setDropIndicator(null);
     setDragOffset(null);
     setIsDragging(false);
-    
+
     console.log('拖拽取消，重置所有状态');
   };
 
   // 处理拖拽经过
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    
+
     if (!over || !dragOffset) return;
-    
+
     setOverId(over.id);
-    
+
     // 获取当前鼠标位置 - 使用delta.x来计算水平偏移
     // delta是相对于拖拽开始位置的偏移量，更可靠
     const { delta } = event;
     const horizontalOffset = delta.x; // 直接使用delta.x作为水平偏移量
-    
+
     setDragOffset({ ...dragOffset, x: horizontalOffset });
-    
+
     console.log('拖拽中 - 水平偏移:', horizontalOffset, 'px');
-    
+
     // 水平方向阈值 - 20px
     const horizontalThreshold = 20;
-    
+
     // 如果拖拽到了根区域
     if (over.id === 'root-drop-area') {
       setDropIndicator({
@@ -419,17 +419,17 @@ export default function MenusPage() {
       });
       return;
     }
-    
+
     // 如果拖拽到了菜单项上且不是自己
     if (active.id !== over.id) {
       const activeMenu = active.data.current?.menu as MenuWithLevel;
       const overMenu = flattenedMenus.find(m => m.id === Number(over.id));
-      
+
       if (!activeMenu || !overMenu) return;
-      
+
       // 使用delta.x判断是否进入子菜单模式
       const shouldBeChildMenu = horizontalOffset > horizontalThreshold;
-      
+
       // 设置拖拽指示器
       setDropIndicator({
         id: over.id,
@@ -438,47 +438,47 @@ export default function MenusPage() {
         indentLevel: overMenu.level,
         isChildIndicator: shouldBeChildMenu
       });
-      
+
       console.log(shouldBeChildMenu ? '判断为子菜单模式 - 可以上下移动选择目标父菜单' : '判断为普通排序模式');
       console.log('当前水平偏移:', horizontalOffset, 'px, 阈值:', horizontalThreshold, 'px');
     }
   };
-  
+
   // 处理拖拽结束事件
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     // 保存当前偏移量用于API调用
     const finalOffset = dragOffset?.x || 0;
     const horizontalThreshold = 20;
-    
+
     console.log('拖拽结束 - 最终水平偏移:', finalOffset, 'px');
-    
+
     // 重置状态
     setActiveId(null);
     setOverId(null);
     setDropIndicator(null);
     setIsDragging(false);
-    
+
     if (!over || !dragOffset) {
       setDragOffset(null);
       return;
     }
-    
+
     if (active.id !== over.id) {
       setIsLoading(true);
-      
+
       try {
         const activeId = Number(active.id);
         const baseUrl = window.location.origin;
-        
+
         // 判断是否应该成为子菜单 - 基于水平偏移量
         const shouldBeChildMenu = finalOffset > horizontalThreshold;
-        
+
         // 拖拽到根区域
         if (over.id === 'root-drop-area') {
           console.log('拖拽到根区域 - 移动到根级菜单');
-          
+
           const response = await fetch(`${baseUrl}/api/menus/reorder`, {
             method: 'POST',
             headers: {
@@ -491,23 +491,23 @@ export default function MenusPage() {
               position: 'root'
             }),
           });
-          
+
           if (!response.ok) {
             const errorText = await response.text();
             console.error('API错误:', errorText);
             throw new Error(`重新排序菜单失败: ${errorText}`);
           }
-          
+
           await response.json();
           fetchMenus();
         } else {
           // 拖拽到了其他菜单上
           const targetId = Number(over.id);
-          
+
           // 根据水平偏移决定操作类型
           let position: 'before' | 'after' | 'inside';
           let parentId: number | null = null;
-          
+
           if (shouldBeChildMenu) {
             // 如果水平偏移超过阈值，则成为子菜单
             // 先右拖拽再上下移动的模式
@@ -521,14 +521,14 @@ export default function MenusPage() {
             parentId = overMenu?.parentId || null;
             console.log('执行普通排序操作 - 放在菜单后面');
           }
-          
+
           console.log('发送API请求:', {
             activeId,
             overId: targetId,
             newParentId: parentId,
             position
           });
-          
+
           const response = await fetch(`${baseUrl}/api/menus/reorder`, {
             method: 'POST',
             headers: {
@@ -541,13 +541,13 @@ export default function MenusPage() {
               position
             }),
           });
-          
+
           if (!response.ok) {
             const errorText = await response.text();
             console.error('API错误:', errorText);
             throw new Error(`重新排序菜单失败: ${errorText}`);
           }
-          
+
           await response.json();
           fetchMenus();
         }
@@ -580,11 +580,11 @@ export default function MenusPage() {
     });
     setIsCreateModalOpen(true);
   };
-  
+
   // 处理创建菜单表单变化
   const handleCreateMenuChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value, type } = e.target;
-    
+
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setNewMenu(prev => ({ ...prev, [id]: checked }));
@@ -592,12 +592,12 @@ export default function MenusPage() {
       setNewMenu(prev => ({ ...prev, [id]: value }));
     }
   };
-  
+
   // 提交创建菜单表单
   const handleCreateMenuSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const baseUrl = window.location.origin;
       const response = await fetch(`${baseUrl}/api/menus`, {
@@ -615,12 +615,12 @@ export default function MenusPage() {
           order: Number(newMenu.order)
         }),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`创建菜单失败: ${errorText}`);
       }
-      
+
       await response.json();
       toast({
         title: '成功',
@@ -639,7 +639,7 @@ export default function MenusPage() {
       setIsLoading(false);
     }
   };
-  
+
   // 打开编辑菜单模态框
   const handleOpenEditModal = (menu: Menu) => {
     setCurrentMenu(menu);
@@ -655,12 +655,12 @@ export default function MenusPage() {
     });
     setIsEditModalOpen(true);
   };
-  
+
   // 处理编辑菜单表单变化
   const handleEditMenuChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value, type } = e.target;
     const fieldName = id.replace('edit-', '');
-    
+
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setEditMenu(prev => ({ ...prev, [fieldName]: checked }));
@@ -668,12 +668,12 @@ export default function MenusPage() {
       setEditMenu(prev => ({ ...prev, [fieldName]: value }));
     }
   };
-  
+
   // 提交编辑菜单表单
   const handleEditMenuSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const baseUrl = window.location.origin;
       const response = await fetch(`${baseUrl}/api/menus/${editMenu.id}`, {
@@ -691,12 +691,12 @@ export default function MenusPage() {
           order: Number(editMenu.order)
         }),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`更新菜单失败: ${errorText}`);
       }
-      
+
       await response.json();
       toast({
         title: '成功',
@@ -715,29 +715,29 @@ export default function MenusPage() {
       setIsLoading(false);
     }
   };
-  
+
   // 打开删除菜单确认框
   const handleOpenDeleteDialog = (id: number) => {
     setMenuToDelete(id);
     setIsDeleteDialogOpen(true);
   };
-  
+
   // 确认删除菜单
   const handleDeleteMenu = async () => {
     if (!menuToDelete) return;
-    
+
     setIsLoading(true);
     try {
       const baseUrl = window.location.origin;
       const response = await fetch(`${baseUrl}/api/menus/${menuToDelete}`, {
         method: 'DELETE',
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`删除菜单失败: ${errorText}`);
       }
-      
+
       toast({
         title: '成功',
         description: '菜单删除成功',
@@ -757,15 +757,15 @@ export default function MenusPage() {
   };
 
   // 可排序的菜单项组件
-  const MenuItem = memo(({ 
-    menu, 
-    onEdit, 
-    onDelete, 
-    dragHandleProps, 
-    isDragging 
-  }: { 
-    menu: MenuWithLevel; 
-    onEdit: (menu: Menu) => void; 
+  const MenuItem = memo(({
+    menu,
+    onEdit,
+    onDelete,
+    dragHandleProps,
+    isDragging
+  }: {
+    menu: MenuWithLevel;
+    onEdit: (menu: Menu) => void;
     onDelete: (id: number) => void;
     dragHandleProps?: any;
     isDragging?: boolean;
@@ -775,23 +775,23 @@ export default function MenusPage() {
     const isInside = isOver && dropIndicator?.type === 'inside';
     const isBefore = isOver && dropIndicator?.type === 'before';
     const isAfter = isOver && dropIndicator?.type === 'after';
-    
+
     // 判断是否有子菜单
     const hasChildMenus = (id: number) => {
       return flattenedMenus.some(menu => menu.parentId === id);
     };
-    
+
     return (
-      <div 
+      <div
         className={`
           relative flex items-center justify-between p-3 mb-1 rounded-md border
           ${isDragging ? 'bg-gray-50' : 'bg-white'}
           ${isOver ? 'ring-2 ring-blue-400' : ''}
           ${hasChildMenus(menu.id) ? 'border-blue-100' : 'border-gray-200'}
         `}
-        style={{ 
+        style={{
           marginLeft: `${menu.level * 20}px`,
-          width: `calc(100% - ${menu.level * 20}px)` 
+          width: `calc(100% - ${menu.level * 20}px)`
         }}
       >
         {/* 拖拽指示器 */}
@@ -816,16 +816,16 @@ export default function MenusPage() {
             </span>
           </div>
         )}
-        
+
         <div className="flex items-center flex-1 min-w-0">
           <div {...dragHandleProps} className="cursor-grab mr-2 text-gray-400 hover:text-gray-600">
             <GripVertical size={16} />
           </div>
-          
+
           <div className="truncate">
             <div className="font-medium text-gray-900 truncate flex items-center">
-              {menu.isExternal ? 
-                <ExternalLink className="h-4 w-4 mr-1 text-gray-500" /> : 
+              {menu.isExternal ?
+                <ExternalLink className="h-4 w-4 mr-1 text-gray-500" /> :
                 <Link className="h-4 w-4 mr-1 text-gray-500" />
               }
               {menu.name}
@@ -838,7 +838,7 @@ export default function MenusPage() {
             <div className="text-sm text-gray-500 truncate">{menu.url}</div>
           </div>
         </div>
-        
+
         {/* 将操作按钮移到右边 */}
         <div className="flex items-center ml-4 shrink-0">
           <Button
@@ -881,7 +881,7 @@ export default function MenusPage() {
             </button>
           </div>
         </div>
-        
+
         <div className="mt-6">
           <div className="relative max-w-lg">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -896,7 +896,7 @@ export default function MenusPage() {
             />
           </div>
         </div>
-        
+
         <div className="mt-8 flex flex-col">
           {isLoading ? (
             <div className="text-center py-12">
@@ -952,20 +952,20 @@ export default function MenusPage() {
                 >
                   {flattenedMenus
                     .map((menu) => (
-                      <SortableMenuItem 
-                        key={menu.id} 
+                      <SortableMenuItem
+                        key={menu.id}
                         id={menu.id}
                         menu={menu}
                       >
-                        <MenuItem 
-                          menu={menu} 
+                        <MenuItem
+                          menu={menu}
                           onEdit={handleOpenEditModal}
                           onDelete={handleOpenDeleteDialog}
                         />
                       </SortableMenuItem>
                     ))}
                 </SortableContext>
-                
+
                 <DragOverlay>
                   {activeId && isDragging ? (
                     <div className="bg-white p-4 rounded-md shadow-lg border-2 border-blue-500 w-64 relative">
@@ -981,14 +981,14 @@ export default function MenusPage() {
                           {flattenedMenus.find(m => m.id === Number(activeId))?.name}
                         </span>
                       </div>
-                      
+
                       {/* 水平偏移提示 - 更加醒目的设计 */}
                       {dragOffset && (
                         <div className="absolute -top-10 left-0 right-0 text-center">
                           <div className={`
                             inline-flex items-center px-3 py-1.5 rounded-md shadow-md
-                            ${dragOffset.x > 20 
-                              ? "bg-blue-100 text-blue-700 border border-blue-300" 
+                            ${dragOffset.x > 20
+                              ? "bg-blue-100 text-blue-700 border border-blue-300"
                               : "bg-gray-100 text-gray-700 border border-gray-300"
                             }
                             font-medium text-sm
@@ -1043,7 +1043,7 @@ export default function MenusPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="description" className="block text-sm font-medium text-gray-700">
                   描述
@@ -1056,7 +1056,7 @@ export default function MenusPage() {
                   rows={2}
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="url" className="block text-sm font-medium text-gray-700">
                   URL
@@ -1069,7 +1069,7 @@ export default function MenusPage() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              
+
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <Input
@@ -1083,7 +1083,7 @@ export default function MenusPage() {
                     外部链接
                   </Label>
                 </div>
-                
+
                 <div className="flex items-center">
                   <Input
                     type="checkbox"
@@ -1097,7 +1097,7 @@ export default function MenusPage() {
                   </Label>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="parentId" className="block text-sm font-medium text-gray-700">
@@ -1111,7 +1111,11 @@ export default function MenusPage() {
                   >
                     <option value="">无 (顶级菜单)</option>
                     {menus
-                      .filter(menu => !hasChildMenus(menu.id)) // 只允许没有子菜单的菜单作为父菜单，避免多层嵌套
+                      .filter(menu => {
+                        // 不能选择自己作为父菜单
+                        // 不能选择已经有子菜单的菜单作为父菜单（避免多层嵌套）
+                        return !hasChildMenus(menu.id);
+                      })
                       .map(menu => (
                         <option key={menu.id} value={menu.id}>
                           {menu.name}
@@ -1120,7 +1124,7 @@ export default function MenusPage() {
                     }
                   </select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="order" className="block text-sm font-medium text-gray-700">
                     排序
@@ -1134,11 +1138,11 @@ export default function MenusPage() {
                   />
                 </div>
               </div>
-              
+
               <DialogFooter className="mt-6">
-                <Button 
-                  type="button" 
-                  variant="secondary" 
+                <Button
+                  type="button"
+                  variant="secondary"
                   onClick={() => setIsCreateModalOpen(false)}
                 >
                   取消
@@ -1151,7 +1155,7 @@ export default function MenusPage() {
           </form>
         </DialogContent>
       </Dialog>
-      
+
       {/* 编辑菜单模态框 */}
       <Dialog
         open={isEditModalOpen}
@@ -1179,7 +1183,7 @@ export default function MenusPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="edit-description" className="block text-sm font-medium text-gray-700">
                   描述
@@ -1192,7 +1196,7 @@ export default function MenusPage() {
                   rows={2}
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="edit-url" className="block text-sm font-medium text-gray-700">
                   URL
@@ -1205,7 +1209,7 @@ export default function MenusPage() {
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              
+
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <Input
@@ -1219,7 +1223,7 @@ export default function MenusPage() {
                     外部链接
                   </Label>
                 </div>
-                
+
                 <div className="flex items-center">
                   <Input
                     type="checkbox"
@@ -1233,7 +1237,7 @@ export default function MenusPage() {
                   </Label>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="edit-parentId" className="block text-sm font-medium text-gray-700">
@@ -1247,11 +1251,27 @@ export default function MenusPage() {
                   >
                     <option value="">无 (顶级菜单)</option>
                     {menus
-                      .filter(menu => 
-                        menu.id !== editMenu.id && // 不能选择自己作为父菜单
-                        !hasChildMenus(menu.id) && // 只允许没有子菜单的菜单作为父菜单
-                        menu.parentId !== editMenu.id // 不能选择自己的子菜单作为父菜单
-                      )
+                      .filter(menu => {
+                        // 不能选择自己作为父菜单
+                        if (menu.id === editMenu.id) return false;
+
+                        // 不能选择自己的子菜单作为父菜单
+                        if (menu.parentId === editMenu.id) return false;
+
+                        // 不能选择已经有子菜单的菜单作为父菜单（避免多层嵌套）
+                        if (hasChildMenus(menu.id)) return false;
+
+                        // 不能选择自己的子孙菜单作为父菜单（递归检查）
+                        const isDescendant = (parentId: number | null, targetId: number): boolean => {
+                          if (!parentId) return false;
+                          if (parentId === targetId) return true;
+
+                          const children = menus.filter(m => m.parentId === parentId);
+                          return children.some(child => isDescendant(child.id, targetId));
+                        };
+
+                        return !isDescendant(menu.id, editMenu.id);
+                      })
                       .map(menu => (
                         <option key={menu.id} value={menu.id}>
                           {menu.name}
@@ -1260,7 +1280,7 @@ export default function MenusPage() {
                     }
                   </select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="edit-order" className="block text-sm font-medium text-gray-700">
                     排序
@@ -1274,11 +1294,11 @@ export default function MenusPage() {
                   />
                 </div>
               </div>
-              
+
               <DialogFooter className="mt-6">
-                <Button 
-                  type="button" 
-                  variant="secondary" 
+                <Button
+                  type="button"
+                  variant="secondary"
                   onClick={() => setIsEditModalOpen(false)}
                 >
                   取消
@@ -1291,7 +1311,7 @@ export default function MenusPage() {
           </form>
         </DialogContent>
       </Dialog>
-      
+
       {/* 删除菜单确认框 */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>

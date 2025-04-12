@@ -60,12 +60,20 @@ export async function GET(request: NextRequest) {
       postCount: countMap.get(category.id) || 0
     }));
 
-    // 过滤出有已发布文章的分类
-    const filteredCategories = categoriesWithCounts.filter(category => category.postCount > 0);
+    // 检查是否来自管理页面的请求
+    const referer = request.headers.get('referer') || '';
+    const isAdminRequest = referer.includes('/admin/');
 
-    console.log(`成功获取 ${allCategories.length} 个分类，其中 ${filteredCategories.length} 个有已发布文章`);
-
-    return NextResponse.json(filteredCategories);
+    // 如果是管理页面的请求，返回所有分类；否则只返回有已发布文章的分类
+    if (isAdminRequest) {
+      console.log(`成功获取 ${allCategories.length} 个分类（管理页面请求）`);
+      return NextResponse.json(categoriesWithCounts);
+    } else {
+      // 前台页面只显示有已发布文章的分类
+      const filteredCategories = categoriesWithCounts.filter(category => category.postCount > 0);
+      console.log(`成功获取 ${allCategories.length} 个分类，其中 ${filteredCategories.length} 个有已发布文章（前台页面请求）`);
+      return NextResponse.json(filteredCategories);
+    }
   } catch (error) {
     console.error('获取分类列表失败:', error);
     return NextResponse.json(

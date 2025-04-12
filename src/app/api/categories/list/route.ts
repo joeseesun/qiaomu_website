@@ -48,12 +48,10 @@ export async function GET() {
       postCount: countMap.get(category.id) || 0
     }));
 
-    // 过滤出有已发布文章的分类
-    const filteredCategories = categoriesWithCounts.filter(category => category.postCount > 0);
+    // 在管理界面中，我们需要返回所有分类，而不仅仅是有已发布文章的分类
+    console.log(`成功获取 ${allCategories.length} 个分类`);
 
-    console.log(`成功获取 ${allCategories.length} 个分类，其中 ${filteredCategories.length} 个有已发布文章`);
-
-    return NextResponse.json(filteredCategories);
+    return NextResponse.json(categoriesWithCounts);
   } catch (error) {
     console.error('获取分类列表失败:', error);
     return NextResponse.json(

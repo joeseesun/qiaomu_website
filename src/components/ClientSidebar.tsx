@@ -46,7 +46,7 @@ type ClientSidebarProps = {
   showAuthor?: boolean;
   showCategories?: boolean;
   showRecentPosts?: boolean;
-  showTags?: boolean;
+  showPopularTags?: boolean;
 };
 
 export default function ClientSidebar({
@@ -57,7 +57,7 @@ export default function ClientSidebar({
   showAuthor = true,
   showCategories = true,
   showRecentPosts = true,
-  showTags = true,
+  showPopularTags = true,
 }: ClientSidebarProps) {
   return (
     <div className="space-y-6">
@@ -139,7 +139,7 @@ export default function ClientSidebar({
       )}
 
       {/* 热门标签 */}
-      {showTags && tags.length > 0 && (
+      {showPopularTags && tags.length > 0 && (
         <div className="sidebar-section bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
           <h3 className="sidebar-title text-lg font-bold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">热门标签</h3>
           <div className="flex flex-wrap gap-2">

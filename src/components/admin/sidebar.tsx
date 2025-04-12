@@ -1,14 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Tag, 
-  FolderOpen, 
-  Settings, 
+import {
+  LayoutDashboard,
+  FileText,
+  Tag,
+  FolderOpen,
+  Settings,
   LogOut,
-  Image
+  Menu
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -35,9 +35,9 @@ const sidebarItems = [
     icon: Tag,
   },
   {
-    title: '媒体',
-    href: '/admin/media',
-    icon: Image,
+    title: '菜单',
+    href: '/admin/menus',
+    icon: Menu,
   },
   {
     title: '设置',
@@ -65,7 +65,7 @@ export function Sidebar() {
               href={item.href}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                pathname === item.href && "bg-accent text-primary"
+                (pathname === item.href || pathname.startsWith(item.href + '/')) && "bg-accent text-primary"
               )}
             >
               <item.icon className="h-4 w-4" />

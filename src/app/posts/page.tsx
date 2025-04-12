@@ -55,7 +55,7 @@ export default async function AllPostsPage({
                 categories={categories}
                 tags={tags}
                 showCategories={true}
-                showTags={true}
+                showPopularTags={true}
                 showRecentPosts={true}
                 showLatestPosts={true}
               />

@@ -6,13 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from "@/components/ui/label";
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from "@/components/ui/button";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -24,12 +24,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { 
-  DndContext, 
-  closestCenter, 
-  KeyboardSensor, 
-  PointerSensor, 
-  useSensor, 
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
   useSensors,
   DragEndEvent,
   DragStartEvent,
@@ -124,61 +124,61 @@ export default function CategoriesPage() {
 
   // 本地状态，用于拖拽时的视觉反馈
   const [localCategories, setLocalCategories] = useState<Category[]>([]);
-  
+
   // 当 categories 变化时更新本地状态
   useEffect(() => {
     setLocalCategories(categories);
   }, [categories]);
-  
+
   // 过滤分类
   const filteredCategories = localCategories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (category.description?.toLowerCase() || '').includes(searchQuery.toLowerCase())
   );
-  
+
   // 处理拖拽开始
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     setActiveId(Number(active.id));
   };
-  
+
   // 处理拖拽结束事件
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    
+
     if (!over) return;
-    
+
     if (active.id !== over.id) {
       const activeId = Number(active.id);
       const overId = Number(over.id);
-      
+
       console.log(`拖拽结束: 将分类 ${activeId} 移动到 ${overId} 位置`);
-      
+
       // 找到拖拽的分类和目标分类
       const activeCategory = categories.find(c => c.id === activeId);
       const overCategory = categories.find(c => c.id === overId);
-      
+
       if (!activeCategory || !overCategory) {
         console.error('找不到拖拽的分类或目标分类');
         return;
       }
-      
+
       // 更新本地状态
       const oldIndex = categories.findIndex(c => c.id === activeId);
       const newIndex = categories.findIndex(c => c.id === overId);
-      
+
       if (oldIndex !== -1 && newIndex !== -1) {
         const newCategories = arrayMove(categories, oldIndex, newIndex);
-        
+
         // 更新顺序
         const updatedCategories = newCategories.map((category, index) => ({
           ...category,
           order: index + 1
         }));
-        
+
         setCategories(updatedCategories);
-        
+
         // 发送重新排序请求到API
         try {
           const response = await fetch('/api/categories/reorder', {
@@ -191,13 +191,13 @@ export default function CategoriesPage() {
               overId
             })
           });
-          
+
           if (!response.ok) {
             throw new Error('重新排序失败');
           }
-          
+
           console.log('分类重新排序成功');
-          
+
           // 重新获取分类列表以确保数据同步
           fetchCategories();
         } catch (error) {
@@ -207,7 +207,7 @@ export default function CategoriesPage() {
             description: "无法保存新的分类顺序，请刷新页面后重试",
             variant: "destructive",
           });
-          
+
           // 恢复原始顺序
           setCategories(categories);
         }
@@ -220,24 +220,24 @@ export default function CategoriesPage() {
     try {
       setIsLoading(true);
       setError('');
-      
+
       const response = await fetch('/api/categories/list');
-      
+
       if (!response.ok) {
         throw new Error(`获取分类列表失败 (${response.status})`);
       }
-      
+
       const data = await response.json();
       console.log('获取到的分类数据:', data);
-      
+
       // 确保数据是数组
       if (!Array.isArray(data)) {
         throw new Error('获取到的分类数据格式不正确');
       }
-      
+
       // 按 order 字段排序
       const sortedData = [...data].sort((a, b) => a.order - b.order);
-      
+
       setCategories(sortedData);
       setLocalCategories(sortedData);
       setIsLoading(false);
@@ -279,7 +279,7 @@ export default function CategoriesPage() {
   // 创建新分类
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newCategory.name || !newCategory.slug) {
       toast({
         title: "验证失败",
@@ -288,7 +288,7 @@ export default function CategoriesPage() {
       });
       return;
     }
-    
+
     // 检查父级是否有效
     if (newCategory.parentId !== null) {
       // 检查父级是否存在
@@ -301,17 +301,17 @@ export default function CategoriesPage() {
         });
         return;
       }
-      
+
       // 检查父级链是否形成循环
       const checkCircularReference = (parentId: number, ancestorIds: number[] = []): boolean => {
         if (ancestorIds.includes(parentId)) return true;
-        
+
         const parent = categories.find(c => c.id === parentId);
         if (!parent || parent.parentId === null) return false;
-        
+
         return checkCircularReference(parent.parentId, [...ancestorIds, parentId]);
       };
-      
+
       if (checkCircularReference(newCategory.parentId)) {
         toast({
           title: "验证失败",
@@ -321,10 +321,10 @@ export default function CategoriesPage() {
         return;
       }
     }
-    
+
     try {
       setIsCreating(true);
-      
+
       // 自动生成别名（如果没有提供）
       const slug = newCategory.slug || newCategory.name
         .toLowerCase()
@@ -333,8 +333,8 @@ export default function CategoriesPage() {
         .replace(/\-\-+/g, '-')
         .replace(/^-+/, '')
         .replace(/-+$/, '');
-      
-      const response = await fetch('/api/categories/create', {
+
+      const response = await fetch('/api/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -344,15 +344,15 @@ export default function CategoriesPage() {
           slug
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `创建分类失败 (${response.status})`);
       }
-      
+
       // 重新获取分类列表
       fetchCategories();
-      
+
       // 关闭模态框并重置表单
       setIsCreateModalOpen(false);
       setNewCategory({
@@ -362,7 +362,7 @@ export default function CategoriesPage() {
         parentId: null,
         order: 0
       });
-      
+
       toast({
         title: "创建成功",
         description: `分类 "${newCategory.name}" 已创建`,
@@ -382,7 +382,7 @@ export default function CategoriesPage() {
   // 更新分类
   const handleUpdateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!editingCategory || !editingCategory.name || !editingCategory.slug) {
       toast({
         title: "验证失败",
@@ -391,7 +391,7 @@ export default function CategoriesPage() {
       });
       return;
     }
-    
+
     // 检查是否存在循环引用
     if (editingCategory.parentId !== null) {
       // 检查父级是否是自己
@@ -403,20 +403,20 @@ export default function CategoriesPage() {
         });
         return;
       }
-      
+
       // 递归检查父级链是否形成循环
       const checkCircularReference = (categoryId: number, parentId: number): boolean => {
         // 如果分类ID与潜在父级ID相同，则存在循环引用
         if (categoryId === parentId) return true;
-        
+
         // 检查潜在父级的父级是否是当前分类
         const potentialParent = categories.find(c => c.id === parentId);
         if (!potentialParent || potentialParent.parentId === null) return false;
-        
+
         // 递归检查父级链
         return checkCircularReference(categoryId, potentialParent.parentId);
       };
-      
+
       if (checkCircularReference(editingCategory.id, editingCategory.parentId)) {
         toast({
           title: "验证失败",
@@ -426,10 +426,10 @@ export default function CategoriesPage() {
         return;
       }
     }
-    
+
     try {
       setIsEditing(true);
-      
+
       const response = await fetch(`/api/categories/${editingCategory.id}`, {
         method: 'PUT',
         headers: {
@@ -437,18 +437,18 @@ export default function CategoriesPage() {
         },
         body: JSON.stringify(editingCategory),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `更新分类失败 (${response.status})`);
       }
-      
+
       // 重新获取分类列表
       fetchCategories();
-      
+
       // 关闭模态框
       setIsEditModalOpen(false);
-      
+
       toast({
         title: "更新成功",
         description: `分类 "${editingCategory.name}" 已更新`,
@@ -470,22 +470,22 @@ export default function CategoriesPage() {
     try {
       setIsDeleting(true);
       console.log('开始删除分类, ID:', id);
-      
+
       const response = await fetch(`/api/categories/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
+
       console.log('删除分类响应状态:', response.status);
-      
+
       // 尝试解析响应体，不管状态如何
       let errorData: { error?: string } = {};
       try {
         const responseText = await response.text();
         console.log('删除分类响应内容(原始):', responseText);
-        
+
         if (responseText) {
           try {
             errorData = JSON.parse(responseText);
@@ -497,33 +497,33 @@ export default function CategoriesPage() {
       } catch (parseError) {
         console.error('解析响应失败:', parseError);
       }
-      
+
       if (!response.ok) {
         console.error('删除分类失败:', response.status, errorData);
-        
+
         // 处理特定错误情况
         if (response.status === 400) {
           if (errorData.error) {
             if (errorData.error.includes('未分类')) {
               throw new Error('无法删除"未分类"分类，这是系统默认分类。');
             }
-            
+
             throw new Error(errorData.error);
           }
         }
-        
+
         throw new Error(`删除分类失败 (${response.status})`);
       }
-      
+
       console.log('分类删除成功');
-      
+
       // 重新获取分类列表
       fetchCategories();
-      
+
       // 关闭确认对话框
       setIsDeleteAlertOpen(false);
       setCategoryToDelete(null);
-      
+
       toast({
         title: "删除成功",
         description: "分类已删除",
@@ -547,16 +547,16 @@ export default function CategoriesPage() {
   const buildCategoryTree = (categories: Category[]): Category[] => {
     const categoryMap: Record<number, Category> = {};
     const rootCategories: Category[] = [];
-    
+
     // 首先创建所有分类的映射
     categories.forEach(category => {
       categoryMap[category.id] = { ...category, children: [] };
     });
-    
+
     // 然后构建树结构
     categories.forEach(category => {
       const categoryWithChildren = categoryMap[category.id];
-      
+
       if (category.parentId === null) {
         // 这是一个顶级分类
         rootCategories.push(categoryWithChildren);
@@ -572,10 +572,10 @@ export default function CategoriesPage() {
         }
       }
     });
-    
+
     return rootCategories;
   };
-  
+
   // 计算分类树
   const categoryTree = buildCategoryTree(filteredCategories);
 
@@ -623,11 +623,11 @@ export default function CategoriesPage() {
     const checkCircularReference = (categoryId: number, potentialParentId: number): boolean => {
       // 如果分类ID与潜在父级ID相同，则存在循环引用
       if (categoryId === potentialParentId) return true;
-      
+
       // 检查潜在父级的父级是否是当前分类
       const potentialParent = categories.find(c => c.id === potentialParentId);
       if (!potentialParent || potentialParent.parentId === null) return false;
-      
+
       // 递归检查父级链
       return checkCircularReference(categoryId, potentialParent.parentId);
     };
@@ -636,13 +636,13 @@ export default function CategoriesPage() {
     const validParentCategories = categories.filter(c => {
       // 排除自己
       if (excludeId && c.id === excludeId) return false;
-      
+
       // 排除所有子分类
       if (excludeId && getAllChildrenIds(excludeId).includes(c.id)) return false;
-      
+
       // 排除会导致循环引用的父级
       if (excludeId && c.parentId !== null && checkCircularReference(c.id, excludeId)) return false;
-      
+
       return true;
     });
 
@@ -659,7 +659,7 @@ export default function CategoriesPage() {
     return items.map((category) => (
       <React.Fragment key={category.id}>
         <SortableCategoryItem id={category.id}>
-          <div 
+          <div
             className={`flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50 ${
               level > 0 ? 'pl-' + (level * 8 + 3) : ''
             }`}
@@ -696,7 +696,7 @@ export default function CategoriesPage() {
             </div>
           </div>
         </SortableCategoryItem>
-        
+
         {/* 递归渲染子分类 */}
         {category.children && category.children.length > 0 && (
           renderCategoryItems(category.children, level + 1)
@@ -739,12 +739,12 @@ export default function CategoriesPage() {
               className="pl-10"
             />
           </div>
-          
+
           <div className="text-sm text-gray-500">
             共 {filteredCategories.length} 个分类
           </div>
         </div>
-        
+
         <div className="mt-6 flex flex-col">
           <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -799,7 +799,7 @@ export default function CategoriesPage() {
                             <div className="border-2 border-blue-500 border-dashed rounded-lg absolute inset-0 opacity-50"></div>
                           </div>
                         )}
-                        
+
                         <SortableContext
                           items={filteredCategories.map(category => category.id)}
                           strategy={verticalListSortingStrategy}
@@ -817,7 +817,7 @@ export default function CategoriesPage() {
           </div>
         </div>
       </div>
-      
+
       {/* 创建分类模态框 */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
         <DialogContent className="sm:max-w-lg">
@@ -827,7 +827,7 @@ export default function CategoriesPage() {
               填写以下信息创建一个新的分类。
             </DialogDescription>
           </DialogHeader>
-          
+
           <form onSubmit={(e) => handleCreateCategory(e)}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
@@ -861,7 +861,7 @@ export default function CategoriesPage() {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="slug" className="text-right">
                   别名
@@ -879,7 +879,7 @@ export default function CategoriesPage() {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="description" className="text-right">
                   描述
@@ -897,7 +897,7 @@ export default function CategoriesPage() {
                   rows={3}
                 />
               </div>
-              
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="parentId" className="text-right">
                   父分类
@@ -918,7 +918,7 @@ export default function CategoriesPage() {
                 </select>
               </div>
             </div>
-            
+
             <DialogFooter>
               <button
                 type="button"
@@ -943,7 +943,7 @@ export default function CategoriesPage() {
           </form>
         </DialogContent>
       </Dialog>
-      
+
       {/* 编辑分类模态框 */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="sm:max-w-lg">
@@ -953,7 +953,7 @@ export default function CategoriesPage() {
               修改分类信息。
             </DialogDescription>
           </DialogHeader>
-          
+
           {editingCategory && (
             <form onSubmit={(e) => handleUpdateCategory(e)}>
               <div className="grid gap-4 py-4">
@@ -974,7 +974,7 @@ export default function CategoriesPage() {
                     required
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-4 items-center gap-4">
                   <label htmlFor="edit-slug" className="text-right">
                     别名
@@ -992,7 +992,7 @@ export default function CategoriesPage() {
                     required
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-4 items-center gap-4">
                   <label htmlFor="edit-description" className="text-right">
                     描述
@@ -1010,7 +1010,7 @@ export default function CategoriesPage() {
                     rows={3}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-4 items-center gap-4">
                   <label htmlFor="edit-parentId" className="text-right">
                     父分类
@@ -1031,7 +1031,7 @@ export default function CategoriesPage() {
                   </select>
                 </div>
               </div>
-              
+
               <DialogFooter>
                 <button
                   type="button"
@@ -1057,7 +1057,7 @@ export default function CategoriesPage() {
           )}
         </DialogContent>
       </Dialog>
-      
+
       {/* 删除分类确认框 */}
       <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
         <AlertDialogContent>

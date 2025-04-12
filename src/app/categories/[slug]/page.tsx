@@ -35,7 +35,7 @@ export default async function CategoryPage() {
                 tags={tags}
                 showAuthor={true}
                 showCategories={true}
-                showTags={true}
+                showPopularTags={true}
                 showRecentPosts={true}
               />
             </div>
