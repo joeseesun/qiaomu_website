@@ -161,6 +161,11 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjoeseesun%2Fqiaomu_website&project-name=qiaomu-blog&repository-name=qiaomu-blog&demo-title=%E5%90%91%E9%98%B3%E4%B9%94%E6%9C%A8%E5%8D%9A%E5%AE%A2&demo-description=%E4%B8%80%E4%B8%AA%E7%AE%80%E6%B4%81%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F)
 
+我们提供了一个包含示例内容的演示数据库，可以让您快速开始使用博客系统：
+
+- 演示管理员账户：`demo@example.com` / `demo123456`
+- 演示数据库下载：[demo.db](https://github.com/joeseesun/qiaomu_website/raw/main/demo.db)
+
 详细部署步骤请参考 [DEPLOY.md](DEPLOY.md) 文件。
 
 ### 本地快速部署
