@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "regions": ["hnd1"],
+  "env": {
+    "NEXT_PUBLIC_SITE_URL": {
+      "description": "网站URL，用于生成绝对URL"
+    },
+    "JWT_SECRET": {
+      "description": "JWT密钥，用于管理员登录认证"
+    }
+  }
+}

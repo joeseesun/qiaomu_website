@@ -5,6 +5,7 @@
 ## 目录
 
 - [系统要求](#系统要求)
+- [使用Vercel一键部署](#使用vercel一键部署)(推荐)
 - [快速部署](#快速部署)
 - [详细部署步骤](#详细部署步骤)
 - [配置说明](#配置说明)
@@ -16,6 +17,41 @@
 - Node.js 18.x 或更高版本
 - npm 9.x 或更高版本
 - 约 100MB 磁盘空间（不包括后续上传的图片和内容）
+
+## 使用Vercel一键部署
+
+作为Next.js应用，本博客系统可以在Vercel上一键部署，这是最简单的部署方式。
+
+### 1. 点击下方按钮一键部署
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjoeseesun%2Fqiaomu_website&env=JWT_SECRET&envDescription=JWT%E5%AF%86%E9%92%A5%EF%BC%8C%E7%94%A8%E4%BA%8E%E7%AE%A1%E7%90%86%E5%91%98%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81&envLink=https%3A%2F%2Fgithub.com%2Fjoeseesun%2Fqiaomu_website%2Fblob%2Fmain%2FDEPLOY.md&project-name=qiaomu-blog&repository-name=qiaomu-blog&demo-title=%E5%90%91%E9%98%B3%E4%B9%94%E6%9C%A8%E5%8D%9A%E5%AE%A2&demo-description=%E4%B8%80%E4%B8%AA%E7%AE%80%E6%B4%81%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%B3%BB%E7%BB%9F&demo-url=https%3A%2F%2Fqiaomu-blog.vercel.app)
+
+### 2. 配置环境变量
+
+在Vercel部署过程中，您需要设置以下环境变量：
+
+- `JWT_SECRET`: 一个随机字符串，用于加密JWT令牌（可以使用任何复杂字符串）
+
+### 3. 初始化数据库和创建管理员
+
+部署完成后，您需要初始化数据库并创建管理员账户。访问以下特殊路径：
+
+1. 初始化数据库：访问 `https://您的域名/api/admin/init-db`
+2. 创建管理员：访问 `https://您的域名/api/admin/create-admin?email=您的邮箱&password=您的密码`
+
+注意：出于安全考虑，创建管理员后请立即登录并修改密码。
+
+### 4. 开始使用
+
+现在您可以访问您的博客了：
+
+- 博客前台：`https://您的域名`
+- 管理后台：`https://您的域名/admin`
+
+### 5. 注意事项
+
+- Vercel部署的应用使用的是临时文件系统，图片上传将存储在Vercel的CDN上
+- 数据库文件在每次部署时会重置，如果需要持久化存储，请考虑使用外部数据库服务
 
 ## 快速部署
 
