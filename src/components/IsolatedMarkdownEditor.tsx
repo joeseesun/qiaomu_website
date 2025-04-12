@@ -160,83 +160,103 @@ export default function IsolatedMarkdownEditor({
   // 处理粘贴事件
   useEffect(() => {
     const handlePaste = async (e: ClipboardEvent) => {
-      // 检查是否在编辑器内粘贴
-      const isEditorFocused = document.activeElement?.closest('.w-md-editor');
-      if (!isEditorFocused) return;
+      try {
+        // 检查是否在编辑器内粘贴
+        const isEditorFocused = document.activeElement?.closest('.w-md-editor');
+        if (!isEditorFocused) return;
 
-      // 检查剪贴板是否包含图片
-      const items = e.clipboardData?.items;
-      if (!items) return;
+        // 检查剪贴板是否包含图片
+        const items = e.clipboardData?.items;
+        if (!items) return;
 
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          e.preventDefault(); // 阻止默认粘贴行为
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            e.preventDefault(); // 阻止默认粘贴行为
 
-          const file = items[i].getAsFile();
-          if (!file) continue;
+            const file = items[i].getAsFile();
+            if (!file) continue;
 
-          try {
-            setIsUploading(true);
-            toast({
-              title: "上传中",
-              description: "正在上传粘贴的图片...",
-            });
+            try {
+              setIsUploading(true);
+              toast({
+                title: "上传中",
+                description: "正在上传粘贴的图片...",
+              });
 
-            // 上传图片
-            const formData = new FormData();
-            formData.append('file', file);
+              // 上传图片
+              const formData = new FormData();
+              formData.append('file', file);
 
-            const response = await fetch('/api/upload', {
-              method: 'POST',
-              body: formData,
-            });
+              // 添加错误处理和超时设置
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
 
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || '上传失败');
+              const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+              });
+
+              clearTimeout(timeoutId);
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '上传失败');
+              }
+
+              const data = await response.json();
+
+              if (!data.success || !data.file || !data.file.url) {
+                throw new Error('服务器响应格式错误');
+              }
+
+              // 在光标位置插入Markdown图片语法
+              const imageMarkdown = `![${file.name || '图片'}](${data.file.url})`;
+
+              // 获取当前光标位置并插入图片
+              const textArea = document.querySelector('.w-md-editor-text-input') as HTMLTextAreaElement;
+              if (textArea) {
+                const startPos = textArea.selectionStart;
+                const endPos = textArea.selectionEnd;
+                const newValue = value.substring(0, startPos) + imageMarkdown + value.substring(endPos);
+                onChange(newValue);
+
+                // 设置光标位置到图片后
+                setTimeout(() => {
+                  textArea.selectionStart = startPos + imageMarkdown.length;
+                  textArea.selectionEnd = startPos + imageMarkdown.length;
+                  textArea.focus();
+                }, 0);
+              } else {
+                // 如果无法获取光标位置，则追加到内容末尾
+                onChange(value + '\n\n' + imageMarkdown);
+              }
+
+              toast({
+                title: "上传成功",
+                description: "图片已插入到编辑器中",
+              });
+            } catch (err: any) {
+              console.error('上传图片失败:', err);
+              toast({
+                title: "上传失败",
+                description: err.message || "图片上传失败，请重试",
+                variant: "destructive",
+              });
+            } finally {
+              setIsUploading(false);
             }
 
-            const data = await response.json();
-
-            // 在光标位置插入Markdown图片语法
-            const imageMarkdown = `![${file.name || '图片'}](${data.file.url})`;
-
-            // 获取当前光标位置并插入图片
-            const textArea = document.querySelector('.w-md-editor-text-input') as HTMLTextAreaElement;
-            if (textArea) {
-              const startPos = textArea.selectionStart;
-              const endPos = textArea.selectionEnd;
-              const newValue = value.substring(0, startPos) + imageMarkdown + value.substring(endPos);
-              onChange(newValue);
-
-              // 设置光标位置到图片后
-              setTimeout(() => {
-                textArea.selectionStart = startPos + imageMarkdown.length;
-                textArea.selectionEnd = startPos + imageMarkdown.length;
-                textArea.focus();
-              }, 0);
-            } else {
-              // 如果无法获取光标位置，则追加到内容末尾
-              onChange(value + '\n\n' + imageMarkdown);
-            }
-
-            toast({
-              title: "上传成功",
-              description: "图片已插入到编辑器中",
-            });
-          } catch (err: any) {
-            console.error('上传图片失败:', err);
-            toast({
-              title: "上传失败",
-              description: err.message || "图片上传失败，请重试",
-              variant: "destructive",
-            });
-          } finally {
-            setIsUploading(false);
+            break; // 只处理第一个图片
           }
-
-          break; // 只处理第一个图片
         }
+      } catch (error) {
+        console.error('处理粘贴事件时出错:', error);
+        toast({
+          title: "粘贴处理错误",
+          description: "处理粘贴内容时出现错误",
+          variant: "destructive",
+        });
       }
     };
 
@@ -261,11 +281,24 @@ export default function IsolatedMarkdownEditor({
           borderRadius: '4px',
           overflow: 'hidden'
         }}>
+          {isUploading && (
+            <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center z-10">
+              <div className="bg-white p-4 rounded-md shadow-lg">
+                <div className="flex items-center space-x-2">
+                  <svg className="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>正在上传图片...</span>
+                </div>
+              </div>
+            </div>
+          )}
           <MDEditor
             value={value}
             onChange={(val) => onChange(val || '')}
             height={height}
-            data-color-mode="auto"
+            data-color-mode="light"
             preview="live"
             visibleDragbar={true}
             hideToolbar={false}
