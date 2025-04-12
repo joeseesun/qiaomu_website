@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 英文内容字体 */
+:lang(en-US) {
+  font-family: "Helvetica Neue", Roboto, "Segoe UI", SegoeUI, Helvetica, Arial, sans-serif;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -141,6 +146,37 @@
 
   .article-content {
     @apply p-6;
+    /* 中文字体 */
+    --article-font-cn: "Noto Serif CJK SC", "Source Han Serif SC", "Noto Serif SC",
+      "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", serif;
+
+    /* 英文字体 */
+    --article-font-en: "Spectral", "Source Serif Pro", "Crimson Pro", "Merriweather",
+      "Georgia", serif;
+
+    /* 代码字体 */
+    --article-font-mono: "JetBrains Mono", "Fira Code", "Source Code Pro",
+      "Menlo", monospace;
+
+    font-family: var(--article-font-en), var(--article-font-cn);
+  }
+
+  /* 标题样式 */
+  .article-content h1,
+  .article-content h2,
+  .article-content h3,
+  .article-content h4,
+  .article-content h5,
+  .article-content h6 {
+    font-family: var(--article-font-cn);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* 代码块样式 */
+  .article-content pre,
+  .article-content code {
+    font-family: var(--article-font-mono);
   }
 
   .article-title {

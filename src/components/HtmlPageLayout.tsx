@@ -30,22 +30,9 @@ export default function HtmlPageLayout({ title, content, returnUrl = '/', catego
     // 获取iframe元素
     const iframe = document.getElementById('html-content-iframe') as HTMLIFrameElement;
     if (iframe && iframe.contentWindow) {
-      // 写入HTML内容，并添加字体样式
+      // 写入HTML内容，不添加自定义样式，保持原始内容
       iframe.contentWindow.document.open();
-      const fontStyles = `
-        <style>
-          body {
-            font-family: Georgia, "Times New Roman", PMingLiu, STSong, SimSun, "WenQuanYi Bitmap Song", "Noto Serif CJK", serif;
-          }
-          h1, h2, h3, h4, h5, h6 {
-            font-family: Roboto, Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Noto Sans CJK", sans-serif;
-          }
-          pre, code {
-            font-family: JetBrainsMono, "Source Code Pro", Monaco, Menlo, Consolas, "Courier New", Courier, monospace;
-          }
-        </style>
-      `;
-      iframe.contentWindow.document.write(fontStyles + content);
+      iframe.contentWindow.document.write(content);
       iframe.contentWindow.document.close();
 
       // 调整iframe高度以适应内容
