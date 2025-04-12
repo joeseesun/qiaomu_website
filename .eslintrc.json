@@ -1,0 +1,35 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    // 强制使用 === 和 !== 而不是 == 和 !=
+    "eqeqeq": ["error", "always"],
+    
+    // 禁止隐式类型转换
+    "no-implicit-coercion": "error",
+    
+    // 禁止在条件语句中使用常量表达式
+    "no-constant-condition": "error",
+    
+    // 禁止在条件中使用赋值操作符
+    "no-cond-assign": ["error", "always"],
+    
+    // TypeScript 特定规则
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/strict-boolean-expressions": [
+      "error",
+      {
+        "allowString": false,
+        "allowNumber": false,
+        "allowNullableObject": false
+      }
+    ]
+  }
+}
