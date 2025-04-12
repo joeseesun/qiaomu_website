@@ -6,9 +6,5 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["hnd1"],
-  "env": {
-    "JWT_SECRET": {
-      "description": "JWT密钥，用于管理员登录认证"
-    }
-  }
+  "env": {}
 }
