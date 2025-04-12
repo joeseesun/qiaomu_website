@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "../styles/navigation.css";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import ScriptLoader from "@/components/ScriptLoader";
 import { usePathname } from "next/navigation";
 
@@ -54,7 +55,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
         <meta name="author" content="向阳乔木" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" />
-        <script src="/js/theme.js" defer></script>
         <script src="/js/slider.js" defer></script>
         <script src="/js/mobile-menu.js" defer></script>
         {/* Umami流量统计脚本 */}
@@ -69,7 +69,9 @@ export default function RootLayout({
         <ScriptLoader position="body_start" />
 
         <SessionProvider>
-          {children}
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
         </SessionProvider>
 
         {/* 动态加载正文结束脚本 */}
