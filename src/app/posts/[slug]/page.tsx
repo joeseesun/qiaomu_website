@@ -16,6 +16,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import EditPostLink from '@/components/EditPostLink';
 
 // 动态生成元数据
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -309,9 +310,13 @@ export default async function PostPage({ params }: { params: { slug: string } })
                       发布于 {formatDate(post.createdAt)}
                     </span>
                     {post.updatedAt && post.updatedAt !== post.createdAt && (
-                      <span>
+                      <span className="flex items-center">
                         更新于 {formatDate(post.updatedAt)}
+                        <EditPostLink postId={post.id} />
                       </span>
+                    )}
+                    {(!post.updatedAt || post.updatedAt === post.createdAt) && (
+                      <EditPostLink postId={post.id} />
                     )}
                   </div>
 
@@ -453,10 +458,9 @@ export default async function PostPage({ params }: { params: { slug: string } })
               <Sidebar
                 categories={categories}
                 tags={tags}
-                showAuthor={true}
                 showCategories={true}
-                showTags={true}
                 showRecentPosts={true}
+                showPopularTags={true}
               />
             </div>
           </div>
