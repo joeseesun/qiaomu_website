@@ -56,9 +56,17 @@ export default function ImageUploader({
   // 处理粘贴事件
   useEffect(() => {
     const handlePaste = async (e: ClipboardEvent) => {
-      // 允许在整个页面上粘贴图片
-      // 不再限制必须在上传区域内粘贴
-      // if (!dropAreaRef.current?.contains(document.activeElement)) return;
+      // 检查当前焦点是否在上传区域内或者粘贴图标按钮被点击
+      const isUploadAreaFocused = dropAreaRef.current?.contains(document.activeElement);
+
+      // 检查是否在Markdown编辑器中
+      const isInMarkdownEditor = document.activeElement?.closest('.w-md-editor');
+
+      // 如果在Markdown编辑器中，不处理粘贴事件，让编辑器自己处理
+      if (isInMarkdownEditor) return;
+
+      // 如果不在上传区域内，也不处理
+      if (!isUploadAreaFocused) return;
 
       // 检查剪贴板是否包含图片
       const items = e.clipboardData?.items;
@@ -73,7 +81,7 @@ export default function ImageUploader({
 
           toast({
             title: "正在处理",
-            description: "正在上传粘贴的图片...",
+            description: "正在上传封面图片...",
             duration: 2000,
           });
 
@@ -196,20 +204,20 @@ export default function ImageUploader({
                   className="flex items-center gap-1"
                   onClick={(e) => {
                     e.stopPropagation();
+                    // 聚焦到上传区域
+                    dropAreaRef.current?.focus();
                     toast({
                       title: "粘贴提示",
-                      description: "请使用 Ctrl+V / Cmd+V 粘贴图片",
-                      duration: 2000,
+                      description: "请先点击此按钮，然后使用 Ctrl+V / Cmd+V 粘贴图片作为封面",
+                      duration: 3000,
                     });
                   }}
                 >
                   <Clipboard size={14} />
-                  <span>粘贴图片</span>
+                  <span>粘贴封面图片</span>
                 </Button>
               </div>
-              <p className="mt-2 text-xs text-gray-500">
-                支持拖放或直接粘贴图片（Ctrl+V / Cmd+V）
-              </p>
+              
             </>
           )}
           <input

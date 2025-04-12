@@ -180,7 +180,7 @@ export default function IsolatedMarkdownEditor({
               setIsUploading(true);
               toast({
                 title: "上传中",
-                description: "正在上传粘贴的图片...",
+                description: "正在上传并插入图片到编辑器...",
               });
 
               // 上传图片
@@ -234,7 +234,7 @@ export default function IsolatedMarkdownEditor({
 
               toast({
                 title: "上传成功",
-                description: "图片已插入到编辑器中",
+                description: "图片已成功插入到编辑器内容中",
               });
             } catch (err: any) {
               console.error('上传图片失败:', err);
@@ -319,7 +319,7 @@ export default function IsolatedMarkdownEditor({
       )}
 
       <p className="text-xs text-gray-500 mt-1">
-        支持直接粘贴图片（Ctrl+V / Cmd+V）到编辑器中
+        将光标放在编辑器中，然后直接粘贴图片（Ctrl+V / Cmd+V）即可插入图片
       </p>
     </div>
   );
