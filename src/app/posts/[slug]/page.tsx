@@ -300,7 +300,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                   </div>
 
                   {/* 文章标题 */}
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-relaxed">
                     {post.title}
                   </h1>
 
