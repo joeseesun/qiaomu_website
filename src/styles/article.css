@@ -1,0 +1,73 @@
+/* 文章详情页字体样式 */
+
+/* 定义字体变量 */
+:root {
+  /* 无衬线字体 */
+  --fonts-sans-serif: Roboto, Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Noto Sans CJK", sans-serif;
+  
+  /* 衬线字体 */
+  --fonts-serif: Georgia, "Times New Roman", PMingLiu, STSong, SimSun, "WenQuanYi Bitmap Song", "Noto Serif CJK", serif;
+  
+  /* 等宽字体 */
+  --fonts-monospace: JetBrainsMono, "Source Code Pro", Monaco, Menlo, Consolas, "Courier New", Courier, monospace;
+}
+
+/* 文章内容样式 */
+.article-content {
+  font-family: var(--fonts-serif);
+}
+
+/* 文章标题样式 */
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+  font-family: var(--fonts-sans-serif);
+  font-weight: 600;
+}
+
+/* 代码块样式 */
+.article-content pre,
+.article-content code {
+  font-family: var(--fonts-monospace);
+}
+
+/* 自定义Markdown渲染样式 */
+.prose-custom {
+  font-family: var(--fonts-serif);
+}
+
+.prose-custom h1,
+.prose-custom h2,
+.prose-custom h3,
+.prose-custom h4,
+.prose-custom h5,
+.prose-custom h6 {
+  font-family: var(--fonts-sans-serif);
+}
+
+.prose-custom code,
+.prose-custom pre {
+  font-family: var(--fonts-monospace);
+}
+
+/* 应用到Markdown渲染区域 */
+.prose.prose-lg {
+  font-family: var(--fonts-serif);
+}
+
+.prose.prose-lg h1,
+.prose.prose-lg h2,
+.prose.prose-lg h3,
+.prose.prose-lg h4,
+.prose.prose-lg h5,
+.prose.prose-lg h6 {
+  font-family: var(--fonts-sans-serif);
+}
+
+.prose.prose-lg code,
+.prose.prose-lg pre {
+  font-family: var(--fonts-monospace);
+}

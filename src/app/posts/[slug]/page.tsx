@@ -321,7 +321,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                   </div>
 
                   {/* 文章内容 - Markdown渲染 */}
-                  <div className="prose prose-lg dark:prose-invert max-w-none">
+                  <div className="prose prose-lg dark:prose-invert max-w-none prose-custom">
                     <Markdown
                       remarkPlugins={[remarkGfm]}
                       rehypePlugins={[rehypeRaw, rehypeSanitize]}
