@@ -155,16 +155,38 @@
 
 ## 开始使用
 
+### 快速部署
+
+我们提供了一键部署脚本，只需要几个简单的命令即可完成部署：
+
+```bash
+# 克隆仓库
+git clone https://github.com/joeseesun/qiaomu_website.git
+cd qiaomu_website
+
+# 使用一键部署脚本
+# Linux/macOS
+bash setup.sh
+
+# Windows
+setup.bat
+```
+
+或者使用 Docker 部署：
+
+```bash
+# 使用 Docker Compose 部署
+docker-compose up -d
+```
+
+详细的部署指南请参考 [DEPLOY.md](DEPLOY.md) 文件。
+
+### 开发模式
+
 运行开发服务器：
 
 ```bash
 npm run dev
-# 或
-yarn dev
-# 或
-pnpm dev
-# 或
-bun dev
 ```
 
 在浏览器中打开 [http://localhost:3000](http://localhost:3000) 查看结果。
@@ -454,21 +476,9 @@ bun dev
 - **改善用户体验**: 用户在浏览同一页面或返回之前访问过的页面时，可以立即看到内容
 - **减轻服务器负担**: 减少数据库查询次数，降低服务器负载
 
-## 开始使用
+## 部署与开发
 
-运行开发服务器：
-
-```bash
-npm run dev
-# 或
-yarn dev
-# 或
-pnpm dev
-# 或
-bun dev
-```
-
-在浏览器中打开 [http://localhost:3000](http://localhost:3000) 查看结果。
+详细的部署指南请参考 [DEPLOY.md](DEPLOY.md) 文件，其中包含了完整的部署步骤、配置说明和常见问题解决方案。
 
 ## 项目结构
 
