@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import SearchBox from './SearchBox';
 import ThemeToggle from './ThemeToggle';
+import AdminPublishLink from './AdminPublishLink';
 
 type MenuItem = {
   id: number;
@@ -190,6 +191,9 @@ const SimpleNavigation = ({ siteTitle, menus = [] }: SimpleNavigationProps) => {
 
               {/* 搜索框 */}
               <SearchBox />
+
+              {/* 发布文章按钮 - 仅管理员可见 */}
+              <AdminPublishLink />
 
               {/* 主题切换按钮 */}
               <ThemeToggle />
@@ -431,6 +435,9 @@ const SimpleNavigation = ({ siteTitle, menus = [] }: SimpleNavigationProps) => {
                   );
                 }
               })}
+
+              {/* 移动端发布文章按钮 - 仅管理员可见 */}
+              <AdminPublishLink isMobile={true} />
 
               {/* 移动端主题切换按钮 */}
               <ThemeToggle isMobile={true} />
